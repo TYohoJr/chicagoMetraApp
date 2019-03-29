@@ -34,8 +34,6 @@ class LineDropdown extends React.Component {
                     Choose Your Line
         </DropdownToggle>
                 <DropdownMenu>
-                    <DropdownItem onClick={this.selectLine}>BNSF</DropdownItem>
-                    <DropdownItem divider />
                     <DropdownItem onClick={this.selectLine}>MD-N</DropdownItem>
                     <DropdownItem divider />
                     <DropdownItem onClick={this.selectLine}>NCS</DropdownItem>

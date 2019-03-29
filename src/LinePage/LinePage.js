@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import './LinePage.css';
 import { connect } from 'react-redux';
 import LineAlerts from '../LineAlerts/LineAlerts';
+import LineTrains from '../LineTrains/LineTrains';
 
 class LinePage extends Component {
     render() {
         return (
             <div>
-                <LineAlerts line={this.props.line}/>
+                <LineTrains line={this.props.line}/>
+                <LineAlerts line={this.props.line} />
             </div>
         )
     }

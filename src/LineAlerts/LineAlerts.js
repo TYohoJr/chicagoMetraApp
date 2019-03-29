@@ -15,13 +15,12 @@ class LinePage extends Component {
     }
 
     componentDidMount() {
-        axios.get('/apiTest').then((result) => {
+        axios.get('/get-alerts').then((result) => {
             this.mapAlerts(result.data)
         })
     }
 
     mapAlerts(data) {
-        console.log(data);
         let alertsArray = [];
         data.body.map((item) => {
             return item.alert.informed_entity.map((itemEntity) => {
@@ -57,7 +56,7 @@ class LinePage extends Component {
         return (
             <div>
                 <div id='alerts-container'>
-                    <p>{this.state.alertsTitle}<br/>Click Alert To View More Details</p>
+                    <p>{this.state.alertsTitle}<br />Click Alert To View More Details</p>
                     {this.state.alerts}
                 </div>
             </div>

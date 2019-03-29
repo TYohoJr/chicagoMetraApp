@@ -6,6 +6,7 @@ const currentPageReducer = (state, action) => {
     if (!state) {
         state = {
             currentPage: <LineDropdown />,
+            calendarDates: []
         }
     }
     switch (action.type) {
@@ -13,6 +14,11 @@ const currentPageReducer = (state, action) => {
             return state = {
                 ...state,
                 currentPage: action.currentPage,
+            }
+        case "changeCalendarDates":
+            return state = {
+                ...state,
+                calendarDates: action.calendarDates
             }
         default:
             return state = {
