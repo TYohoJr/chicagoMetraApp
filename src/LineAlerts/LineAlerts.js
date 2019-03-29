@@ -15,9 +15,9 @@ class LinePage extends Component {
     }
 
     componentDidMount() {
-        axios.get('/get-alerts').then((result) => {
+        axios.post('/access-api', { url: 'alerts' }).then((result) => {
             this.mapAlerts(result.data)
-        })
+        });
     }
 
     mapAlerts(data) {

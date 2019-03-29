@@ -8,6 +8,7 @@ class LinePage extends Component {
     render() {
         return (
             <div>
+                <p>{this.props.line}</p>
                 <LineTrains line={this.props.line}/>
                 <LineAlerts line={this.props.line} />
             </div>

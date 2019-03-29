@@ -11,7 +11,7 @@ class HomePage extends Component {
     }
 
     getCalendarDates() {
-        Axios.get('/get-calendar-dates').then((result)=>{
+        Axios.post('/access-api', { url: 'schedule/calendar_dates' }).then((result)=>{
             this.props.dispatch({
                 type: 'changeCalendarDates',
                 calendarDates: result.data.body.map((item) => item.service_id)
