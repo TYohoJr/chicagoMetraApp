@@ -1,0 +1,60 @@
+Base URL = gtfsapi.metrarail.com/gtfs
+
+Static Feeds:
+
+
+/schedule/stops
+List of all stops on all lines. 
+Not currently very useful since we need to access stops on a specific line.
+
+/schedule/stop_times
+List of every specific time and stop.
+The length of the array is over 85,000... don't really want to use that.
+Use stop_times/<TRIP_ID> instead.
+
+/schedule/trips
+List of each trip/train for every day.
+Can use in conjunction with calendar_dates to filter only todays running trains.
+Also will need to filter through trip_id.
+
+/schedule/shapes
+I don't know what this is and it doesn't seem useful.
+
+/schedule/routes
+Array of each of the 12 Lines.
+Could be useful to pull out either the color associated with the line or the long name of the line.
+
+/schedule/calendar
+List of all calendar codes.
+Use calendar_dates instead.
+
+/schedule/calendar_dates
+List of calendar codes that are currently applicable.
+Useful to filter through trips and only get those that are running today.
+
+/schedule/agency
+Single item array stating the agency is Metra.
+Has link to buy tickets.
+
+/schedule/stop_times/<TRIP_ID>
+When given a trip_id gives an array of the trips stops.
+Includes arrival time, stop_id (city/location name), sequence of stops
+
+
+Realtime Feeds:
+
+
+/alerts
+List of all currently active Metra alerts.
+Filter through the alerts based on line and display on main line page.
+
+/positions
+List of all currently active trains and their location.
+The location of trains could be put onto a map.
+Other parts that wouldseem useful here don't actually seem to be utilized.
+
+/tripUpdates
+List of all currently active trains and the stops they have remaining.
+Has stops left, sequence of those stops, delay in seconds, trip start and end.
+Very useful, not sure what /positions has that this one doesn't do better..
+

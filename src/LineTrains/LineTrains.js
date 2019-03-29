@@ -18,7 +18,9 @@ class LineTrains extends Component {
         Axios.post('/access-api', { url: 'schedule/trips' }).then((result) => {
             this.filterTripsByCalendar(result.data.body.filter(trip => trip.route_id === this.props.line))
         });
-        // Axios.get('')
+        Axios.post('access-api', { url: 'tripUpdates' }).then((result)=>{
+            console.log(result)
+        })
     }
 
     filterTripsByCalendar(unfilteredTrips) {
