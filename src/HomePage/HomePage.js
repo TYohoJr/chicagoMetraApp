@@ -11,12 +11,14 @@ class HomePage extends Component {
     }
 
     getCalendarDates() {
-        Axios.post('/access-api', { url: 'schedule/calendar_dates' }).then((result)=>{
-            this.props.dispatch({
-                type: 'changeCalendarDates',
-                calendarDates: result.data.body.map((item) => item.service_id)
+        if (!this.props.currentPageReducer.calendarDates.length) {
+            Axios.post('/access-api', { url: 'schedule/calendar_dates' }).then((result) => {
+                this.props.dispatch({
+                    type: 'changeCalendarDates',
+                    calendarDates: result.data.body.map((item) => item.service_id)
+                });
             });
-        })
+        }
     }
 
     componentDidMount() {
@@ -26,7 +28,7 @@ class HomePage extends Component {
     render() {
         return (
             <div id='homepage-container'>
-            <MyNavbar />
+                <MyNavbar />
                 {this.props.currentPageReducer.currentPage}
             </div>
         )
