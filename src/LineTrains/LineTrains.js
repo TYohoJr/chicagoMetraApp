@@ -3,7 +3,7 @@ import './LineTrains.css';
 import { connect } from 'react-redux';
 import Axios from 'axios';
 import { Input } from 'reactstrap';
-import SearchResultList from '../SearchResultList/SearchResultList.js';
+import { Table } from 'reactstrap';
 
 class LineTrains extends Component {
     constructor() {
@@ -13,6 +13,7 @@ class LineTrains extends Component {
         this.changeStartStop = this.changeStartStop.bind(this);
         this.changeEndStop = this.changeEndStop.bind(this);
         this.searchForTrains = this.searchForTrains.bind(this);
+        this.updateTable = this.updateTable.bind(this);
         this.state = {
             stopStartOptions: [],
             stopEndOptions: [],
@@ -21,7 +22,8 @@ class LineTrains extends Component {
             endStop: '',
             trainList: '',
             searchResults: [],
-            showSearchResults: ''
+            showSearchResults: '',
+            tableData: ''
         }
     }
 
@@ -39,7 +41,6 @@ class LineTrains extends Component {
     filterStopsByLine(unfilteredStops) {
         let filteredStartStops = [];
         let filteredEndStops = [];
-        // console.log(unfilteredStops);
         unfilteredStops.data.body.map((item) => {
             if (item.stop_url.search(this.props.line) !== -1) {
                 filteredStartStops.push(item);
@@ -80,32 +81,35 @@ class LineTrains extends Component {
 
     searchForTrains() {
         let searchResults = [];
-        new Promise((resolve, reject) => {
-            for (let i = 0; i < this.state.todaysTrains.length; i++) {
-                Axios.post('/access-api', { url: `schedule/stop_times/${this.state.todaysTrains[i].trip_id}` }).then((result) => {
-                    for (let j = 0; j < result.data.body.length; j++) {
-                        if (result.data.body[j].stop_id === this.state.startStop) {
-                            for (let k = j; k < result.data.body.length; k++) {
-                                if (result.data.body[k].stop_id === this.state.endStop) {
-                                    searchResults.push(result.data.body);
-                                    this.setState({
-                                        searchResults: searchResults
-                                    });
-                                }
+        for (let i = 0; i < this.state.todaysTrains.length; i++) {
+            Axios.post('/access-api', { url: `schedule/stop_times/${this.state.todaysTrains[i].trip_id}` }).then((result) => {
+                for (let j = 0; j < result.data.body.length; j++) {
+                    if (result.data.body[j].stop_id === this.state.startStop) {
+                        for (let k = j; k < result.data.body.length; k++) {
+                            if (result.data.body[k].stop_id === this.state.endStop) {
+                                searchResults.push(result.data.body);
+                                this.setState({
+                                    searchResults: searchResults
+                                });
+                                this.updateTable(searchResults);
                             }
                         }
                     }
-                });
-            }
-            setTimeout(() => {
-                resolve()
-            }, 5000)
-        }).then(() => {
-            this.setState({
-                showSearchResults: <SearchResultList searchResults={this.state.searchResults}
-                    endStop={this.state.endStop}
-                    startStop={this.state.startStop} />,
+                }
             });
+        }
+    }
+
+    updateTable(data) {
+        console.log(data)
+        this.setState({
+            tableData: data.map((item) => {
+                return <tr>
+                    <td>{item[0].trip_id}</td>
+                    <td>{item[0].departure_time}</td>
+                    <td>{item[item.length - 1].arrival_time}</td>
+                </tr>
+            })
         })
     }
 
@@ -137,7 +141,18 @@ class LineTrains extends Component {
                     <br />
                     <button onClick={this.searchForTrains}>Search</button>
                     <button onClick={() => console.log(this.state.searchResults)}>Test</button>
-                    {this.state.showSearchResults}
+                    <div id='search-results-table-container'>
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>{this.state.startStop}</th>
+                                    <th>{this.state.endStop}</th>
+                                </tr>
+                            </thead>
+                            <tbody>{this.state.tableData}</tbody>
+                        </Table>
+                    </div>
                 </div>
             </div>
         )

@@ -1,5 +1,14 @@
 #line-trains-container {
-    width: 25%;
+    width: 40%;
     position: absolute;
     left: 25%;
+}
+
+#search-results-table-container {
+    max-height: 50vh;
+    overflow: auto;
+}
+
+td {
+    color:white
 }
