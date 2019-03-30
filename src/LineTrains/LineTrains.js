@@ -3,37 +3,43 @@ import './LineTrains.css';
 import { connect } from 'react-redux';
 import Axios from 'axios';
 import { Input } from 'reactstrap';
+import SearchResultList from '../SearchResultList/SearchResultList.js';
 
 class LineTrains extends Component {
     constructor() {
         super();
-        this.mapTrips = this.mapTrips.bind(this);
         this.filterTripsByCalendar = this.filterTripsByCalendar.bind(this);
         this.filterStopsByLine = this.filterStopsByLine.bind(this);
         this.changeStartStop = this.changeStartStop.bind(this);
         this.changeEndStop = this.changeEndStop.bind(this);
+        this.searchForTrains = this.searchForTrains.bind(this);
         this.state = {
             stopStartOptions: [],
             stopEndOptions: [],
             todaysTrains: [],
             startStop: '',
-            endStop: ''
+            endStop: '',
+            trainList: '',
+            searchResults: [],
+            showSearchResults: ''
         }
     }
 
     componentDidMount() {
-        Axios.post('/access-api', { url: 'schedule/trips' }).then((result) => {
-            this.filterTripsByCalendar(result)
-        });
-        Axios.post('access-api', { url: 'schedule/stops' }).then((result) => {
-            this.filterStopsByLine(result)
-        });
+        if (!this.state.startStop) {
+            Axios.post('/access-api', { url: 'schedule/trips' }).then((result) => {
+                this.filterTripsByCalendar(result)
+            });
+            Axios.post('access-api', { url: 'schedule/stops' }).then((result) => {
+                this.filterStopsByLine(result)
+            });
+        }
     }
 
     filterStopsByLine(unfilteredStops) {
         let filteredStartStops = [];
         let filteredEndStops = [];
-        console.log(unfilteredStops);
+        // console.log(unfilteredStops);
         unfilteredStops.data.body.map((item) => {
             if (item.stop_url.search(this.props.line) !== -1) {
                 filteredStartStops.push(item);
@@ -41,8 +47,8 @@ class LineTrains extends Component {
             }
             return null;
         });
-        filteredStartStops.push({stop_id:'CUS', stop_name:'Chicago Union Station'})
-        filteredEndStops.unshift({stop_id:'CUS', stop_name:'Chicago Union Station'})
+        filteredStartStops.push({ stop_id: 'CUS', stop_name: 'Chicago Union Station' })
+        filteredEndStops.unshift({ stop_id: 'CUS', stop_name: 'Chicago Union Station' })
         this.setState({
             stopStartOptions: filteredStartStops.map((item, i) => {
                 return <option key={i} value={item.stop_id}>{item.stop_name}</option>
@@ -50,8 +56,8 @@ class LineTrains extends Component {
             stopEndOptions: filteredEndStops.map((item, i) => {
                 return <option key={i} value={item.stop_id}>{item.stop_name}</option>
             }),
-            startStop: filteredStartStops[0].stop_name,
-            endStop: filteredEndStops[0].stop_name
+            startStop: filteredStartStops[0].stop_id,
+            endStop: filteredEndStops[0].stop_id
         })
     }
 
@@ -69,12 +75,38 @@ class LineTrains extends Component {
         })
         this.setState({
             todaysTrains: todaysFilteredTrips
-        })
+        });
     }
 
-    mapTrips(data) {
-
-        console.log(data)
+    searchForTrains() {
+        let searchResults = [];
+        new Promise((resolve, reject) => {
+            for (let i = 0; i < this.state.todaysTrains.length; i++) {
+                Axios.post('/access-api', { url: `schedule/stop_times/${this.state.todaysTrains[i].trip_id}` }).then((result) => {
+                    for (let j = 0; j < result.data.body.length; j++) {
+                        if (result.data.body[j].stop_id === this.state.startStop) {
+                            for (let k = j; k < result.data.body.length; k++) {
+                                if (result.data.body[k].stop_id === this.state.endStop) {
+                                    searchResults.push(result.data.body);
+                                    this.setState({
+                                        searchResults: searchResults
+                                    });
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            setTimeout(() => {
+                resolve()
+            }, 5000)
+        }).then(() => {
+            this.setState({
+                showSearchResults: <SearchResultList searchResults={this.state.searchResults}
+                    endStop={this.state.endStop}
+                    startStop={this.state.startStop} />,
+            });
+        })
     }
 
     changeStartStop(e) {
@@ -90,7 +122,6 @@ class LineTrains extends Component {
     }
 
     render() {
-        console.log(this.state)
         return (
             <div>
                 <div id='line-trains-container'>
@@ -104,7 +135,9 @@ class LineTrains extends Component {
                         {this.state.stopEndOptions}
                     </Input>
                     <br />
-                    <button>Search</button>
+                    <button onClick={this.searchForTrains}>Search</button>
+                    <button onClick={() => console.log(this.state.searchResults)}>Test</button>
+                    {this.state.showSearchResults}
                 </div>
             </div>
         )

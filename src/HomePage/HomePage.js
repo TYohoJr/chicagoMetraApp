@@ -19,6 +19,9 @@ class HomePage extends Component {
                 });
             });
         }
+        // Axios.post('/access-api', { url: 'schedule/stop_times/BNSF_BN1201_V1_A' }).then((result) => {
+        //     console.log(result.data)
+        // });
     }
 
     componentDidMount() {

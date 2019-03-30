@@ -1,3 +1,5 @@
 #line-trains-container {
-    max-width: 75vw;
+    width: 25%;
+    position: absolute;
+    left: 25%;
 }
