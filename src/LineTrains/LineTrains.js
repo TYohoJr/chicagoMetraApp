@@ -24,7 +24,8 @@ class LineTrains extends Component {
             trainList: '',
             searchResults: [],
             showSearchResults: '',
-            tableData: null
+            tableData: null,
+            showTrainModal: null
         }
     }
 
@@ -102,23 +103,21 @@ class LineTrains extends Component {
     }
 
     updateTable(data) {
-        // console.log(new Date().toLocaleTimeString());
-        data.sort((a, b) => {
-            a = a[0].departure_time.replace(':', '');
-            b = b[0].departure_time.replace(':', '');
-            if (parseInt(a) < parseInt(b)) {
-                return -1;
-            }
-            if (parseInt(a) > parseInt(b)) {
-                return 1;
-            }
-            return 0;
-        })
+        // data.sort((a, b) => {
+        //     a = a[0].departure_time.replace(':', '');
+        //     b = b[0].departure_time.replace(':', '');
+        //     if (parseInt(a) < parseInt(b)) {
+        //         return -1;
+        //     }
+        //     if (parseInt(a) > parseInt(b)) {
+        //         return 1;
+        //     }
+        //     return 0;
+        // })
         this.setState({
             tableData: data.map((item, i, arr) => {
                 return <tr key={i}>
-                    {/* <td><button onClick={() => this.selectTrain(item)}>{item[0].trip_id}</button></td> */}
-                    <TrainModal tripId={item[0].trip_id} data={item}/>
+                    <td><TrainModal tripId={item[0].trip_id} data={item} /></td>
                     <td>{item[0].departure_time}</td>
                     <td>{item[item.length - 1].arrival_time}</td>
                 </tr>
@@ -165,6 +164,7 @@ class LineTrains extends Component {
                             </thead>
                             <tbody>{this.state.tableData}</tbody>
                         </Table>
+                        {this.state.showTrainModal}
                     </div>
                 </div>
             </div>
