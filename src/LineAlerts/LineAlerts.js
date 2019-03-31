@@ -32,7 +32,7 @@ class LinePage extends Component {
                             alertId: item.id
                         })
                     }
-                } else {
+                } else if(itemEntity.trip){
                     if (itemEntity.trip.route_id === this.props.line) {
                         return alertsArray.push({
                             alertHeader: item.alert.header_text.translation[0].text,
